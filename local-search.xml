@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>博客开张啦</title>
+    <link href="/2026/11/02/hello-world/"/>
+    <url>/2026/11/02/hello-world/</url>
+    
+    <content type="html"><![CDATA[<h1 id="你好，世界-👋"><a href="#你好，世界-👋" class="headerlink" title="你好，世界 👋"></a>你好，世界 👋</h1><p>这是我的第一篇博客文章，博客由 <strong>Hexo</strong> 驱动，托管在 <strong>GitHub Pages</strong> 上。</p><h2 id="这个博客用来做什么"><a href="#这个博客用来做什么" class="headerlink" title="这个博客用来做什么"></a>这个博客用来做什么</h2><ul><li>记录学习和生活中的点滴</li><li>分享技术心得与踩坑经验</li><li>沉淀思考，留下痕迹</li></ul><h2 id="博客是怎么搭起来的"><a href="#博客是怎么搭起来的" class="headerlink" title="博客是怎么搭起来的"></a>博客是怎么搭起来的</h2><ol><li>用 <code>hexo init</code> 初始化博客框架</li><li>写文章只需要在 <code>source/_posts/</code> 下新建 Markdown 文件</li><li>运行 <code>hexo clean &amp;&amp; hexo deploy</code> 一键发布到 GitHub Pages</li></ol><p>欢迎常来逛逛！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>起点</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>随笔</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  
+</search>
