@@ -1,0 +1,947 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="wg7p5hfn5g-gif">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="C 语言学习笔记 · 第三天今天的内容是公认的分水岭：字符串和指针。指针被说是 C 语言最难的部分，但第一天的目标是「先看懂、能写简单例子」，不追求一次吃透。 一、字符串：其实就是字符数组C 语言没有专门的「字符串类型」，字符串就是一串字符的数组，结尾放一个 \0 表示结束。 12345678#include &lt;stdio.h&gt;int main(void)&#123;    char">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C 语言学习笔记 · 第三天">
+<meta property="og:url" content="https://wg7p5hfn5g-gif.github.io/2026/11/07/c-language-day3/index.html">
+<meta property="og:site_name" content="My Blog">
+<meta property="og:description" content="C 语言学习笔记 · 第三天今天的内容是公认的分水岭：字符串和指针。指针被说是 C 语言最难的部分，但第一天的目标是「先看懂、能写简单例子」，不追求一次吃透。 一、字符串：其实就是字符数组C 语言没有专门的「字符串类型」，字符串就是一串字符的数组，结尾放一个 \0 表示结束。 12345678#include &lt;stdio.h&gt;int main(void)&#123;    char">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-11-07T07:50:00.000Z">
+<meta property="article:modified_time" content="2026-11-07T07:56:16.463Z">
+<meta property="article:author" content="wg7p5hfn5g-gif">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>C 语言学习笔记 · 第三天 - My Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"wg7p5hfn5g-gif.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="C 语言学习笔记 · 第三天"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-11-07 15:50" pubdate>
+          2026年11月7日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">C 语言学习笔记 · 第三天</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="C-语言学习笔记-·-第三天"><a href="#C-语言学习笔记-·-第三天" class="headerlink" title="C 语言学习笔记 · 第三天"></a>C 语言学习笔记 · 第三天</h1><p>今天的内容是公认的分水岭：<strong>字符串和指针</strong>。指针被说是 C 语言最难的部分，但第一天的目标是「先看懂、能写简单例子」，不追求一次吃透。</p>
+<h2 id="一、字符串：其实就是字符数组"><a href="#一、字符串：其实就是字符数组" class="headerlink" title="一、字符串：其实就是字符数组"></a>一、字符串：其实就是字符数组</h2><p>C 语言没有专门的「字符串类型」，字符串就是<strong>一串字符的数组，结尾放一个 <code>\0</code> 表示结束</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-type">char</span> name[<span class="hljs-number">20</span>] = <span class="hljs-string">&quot;小明&quot;</span>;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;你好，%s！\n&quot;</span>, name);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>char name[20] = &quot;小明&quot;</code> 在内存里实际是这样的：</p>
+<table>
+<thead>
+<tr>
+<th>下标</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>…</th>
+<th>19</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内容</td>
+<td>小</td>
+<td>明</td>
+<td><code>\0</code></td>
+<td>垃圾值</td>
+<td>垃圾值</td>
+<td></td>
+<td>垃圾值</td>
+</tr>
+</tbody></table>
+<p><code>\0</code> 是字符串的结束标记，<code>printf</code> 靠它判断读到哪儿停。</p>
+<p>⚠️ <strong>坑 1</strong>：数组必须留够位置。<code>char name[3] = &quot;小明&quot;</code> 会出问题，因为「小明」在 UTF-8 里占 6 个字节，加上 <code>\0</code> 至少要 7 个位置。<strong>中文一个字通常占 3 字节</strong>，声明数组时给宽裕点。</p>
+<h2 id="二、字符串常用函数"><a href="#二、字符串常用函数" class="headerlink" title="二、字符串常用函数"></a>二、字符串常用函数</h2><p>都在 <code>string.h</code> 里，用之前要 include：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-type">char</span> a[<span class="hljs-number">20</span>] = <span class="hljs-string">&quot;hello&quot;</span>;<br>    <span class="hljs-type">char</span> b[<span class="hljs-number">20</span>];<br>    <span class="hljs-type">char</span> c[<span class="hljs-number">20</span>] = <span class="hljs-string">&quot;hello&quot;</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;长度：%lu\n&quot;</span>, <span class="hljs-built_in">strlen</span>(a));        <span class="hljs-comment">// 5，不算 \0</span><br><br>    <span class="hljs-built_in">strcpy</span>(b, a);                            <span class="hljs-comment">// 把 a 复制到 b</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;复制后 b：%s\n&quot;</span>, b);<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;比较结果：%d\n&quot;</span>, <span class="hljs-built_in">strcmp</span>(a, c)); <span class="hljs-comment">// 0 表示完全相同</span><br><br>    <span class="hljs-built_in">strcat</span>(a, <span class="hljs-string">&quot; world&quot;</span>);                     <span class="hljs-comment">// 拼接到 a 后面</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;拼接后 a：%s\n&quot;</span>, a);            <span class="hljs-comment">// hello world</span><br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>记忆点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>strlen(s)</code></td>
+<td>求长度</td>
+<td>不算 <code>\0</code></td>
+</tr>
+<tr>
+<td><code>strcpy(dst, src)</code></td>
+<td>复制</td>
+<td>目标在前</td>
+</tr>
+<tr>
+<td><code>strcat(dst, src)</code></td>
+<td>拼接</td>
+<td>目标在前</td>
+</tr>
+<tr>
+<td><code>strcmp(a, b)</code></td>
+<td>比较</td>
+<td>返回 0 才是相等</td>
+</tr>
+</tbody></table>
+<p>⚠️ <strong>坑 2</strong>：字符串<strong>不能用 <code>==</code> 比较</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (a == c)              <span class="hljs-comment">// ❌ 比的是内存地址，永远不相等</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(a, c) == <span class="hljs-number">0</span>)   <span class="hljs-comment">// ✅ 比的是内容</span><br></code></pre></td></tr></table></figure>
+
+<p>⚠️ <strong>坑 3</strong>：也不能用 <code>=</code> 赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c">b = a;                   <span class="hljs-comment">// ❌ 数组不能整体赋值，编译错误</span><br><span class="hljs-built_in">strcpy</span>(b, a);            <span class="hljs-comment">// ✅</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="三、指针：变量的「门牌号」"><a href="#三、指针：变量的「门牌号」" class="headerlink" title="三、指针：变量的「门牌号」"></a>三、指针：变量的「门牌号」</h2><p>先从一个熟悉的东西入手——昨天 <code>scanf</code> 时要加 <code>&amp;</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> num;<br><span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>, &amp;num);    <span class="hljs-comment">// &amp; 就是「取地址」</span><br></code></pre></td></tr></table></figure>
+
+<p><code>&amp;num</code> 得到的是 num 在内存里的地址。<strong>指针就是专门用来存地址的变量。</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">100</span>;<br><br>    <span class="hljs-type">int</span> *p = &amp;a;          <span class="hljs-comment">// p 存的是 a 的地址</span><br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a 的值：%d\n&quot;</span>, a);      <span class="hljs-comment">// 100</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a 的地址：%p\n&quot;</span>, &amp;a);   <span class="hljs-comment">// 类似 0x7ffd...</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;p 存的内容：%p\n&quot;</span>, p);  <span class="hljs-comment">// 和上面一样</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;p 指向的值：%d\n&quot;</span>, *p); <span class="hljs-comment">// 100，* 叫「解引用」</span><br><br>    *p = <span class="hljs-number">200</span>;                       <span class="hljs-comment">// 通过指针改 a 的值</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;改完后 a = %d\n&quot;</span>, a);   <span class="hljs-comment">// 200</span><br><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>两个符号要分清：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>名字</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&amp;a</code></td>
+<td>取地址</td>
+<td>拿到 a 的地址</td>
+</tr>
+<tr>
+<td><code>*p</code></td>
+<td>解引用</td>
+<td>拿到 p 指向的那个值</td>
+</tr>
+</tbody></table>
+<p>声明里的 <code>int *p</code> 那个 <code>*</code> 是「这是个指针」的标记，和用的时候的 <code>*p</code> 不是一回事，别混。</p>
+<h2 id="四、指针真正的用处：让函数修改外面的变量"><a href="#四、指针真正的用处：让函数修改外面的变量" class="headerlink" title="四、指针真正的用处：让函数修改外面的变量"></a>四、指针真正的用处：让函数修改外面的变量</h2><p>昨天学的函数，参数是「复制一份」传进去的，改了也不影响外面：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">change</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span><br>&#123;<br>    x = <span class="hljs-number">999</span>;            <span class="hljs-comment">// 只改了副本</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>想真正改外面的变量，就得传地址：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">change</span><span class="hljs-params">(<span class="hljs-type">int</span> *x)</span><br>&#123;<br>    *x = <span class="hljs-number">999</span>;           <span class="hljs-comment">// 通过地址改原变量</span><br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-type">int</span> a = <span class="hljs-number">1</span>;<br>    change(&amp;a);         <span class="hljs-comment">// 传地址进去</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a = %d\n&quot;</span>, a);   <span class="hljs-comment">// 输出 999</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>经典例子——交换两个数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">swap</span><span class="hljs-params">(<span class="hljs-type">int</span> *a, <span class="hljs-type">int</span> *b)</span><br>&#123;<br>    <span class="hljs-type">int</span> temp = *a;<br>    *a = *b;<br>    *b = temp;<br>&#125;<br><br><span class="hljs-comment">// 调用：swap(&amp;x, &amp;y);</span><br></code></pre></td></tr></table></figure>
+
+<p>这解释了一件事：**为什么 <code>scanf</code> 要加 <code>&amp;</code>**——因为函数要改你外面那个变量，必须知道它在哪。</p>
+<p>⚠️ <strong>坑 4</strong>：野指针。声明了指针却没让它指向任何地方，就直接用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> *p;        <span class="hljs-comment">// 没初始化，指向随机地址</span><br>*p = <span class="hljs-number">5</span>;        <span class="hljs-comment">// ❌ 可能直接崩溃</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>用指针前一定要先让它指向一个有效变量。</strong></p>
+<h2 id="五、实战升级：限制次数的猜数字"><a href="#五、实战升级：限制次数的猜数字" class="headerlink" title="五、实战升级：限制次数的猜数字"></a>五、实战升级：限制次数的猜数字</h2><p>昨天那个猜数字游戏能无限猜，今天加上「最多 7 次」：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;time.h&gt;</span></span><br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    srand(time(<span class="hljs-literal">NULL</span>));<br>    <span class="hljs-type">int</span> answer = rand() % <span class="hljs-number">100</span> + <span class="hljs-number">1</span>;<br>    <span class="hljs-type">int</span> guess;<br>    <span class="hljs-type">int</span> max_try = <span class="hljs-number">7</span>;<br>    <span class="hljs-type">int</span> used = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;我想了一个 1~100 的数字，你有 %d 次机会。\n&quot;</span>, max_try);<br><br>    <span class="hljs-keyword">while</span> (used &lt; max_try) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;还剩 %d 次，请输入：&quot;</span>, max_try - used);<br>        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>, &amp;guess);<br>        used++;<br><br>        <span class="hljs-keyword">if</span> (guess &gt; answer) &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;大了！\n&quot;</span>);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (guess &lt; answer) &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;小了！\n&quot;</span>);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;猜对了！你用了 %d 次。\n&quot;</span>, used);<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;机会用完了，答案是 %d。\n&quot;</span>, answer);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>把 <code>while (1) + break</code> 换成 <code>while (used &lt; max_try)</code>，条件写在循环头里，比到处 <code>break</code> 更清晰——这是今天顺手学到的一个小改进。</p>
+<h2 id="六、今天的坑"><a href="#六、今天的坑" class="headerlink" title="六、今天的坑"></a>六、今天的坑</h2><ol>
+<li>**字符串末尾有 <code>\0</code>**，数组要留够位置，中文一个字约占 3 字节</li>
+<li><strong>字符串不能用 <code>==</code> 比较、不能用 <code>=</code> 赋值</strong>，要用 <code>strcmp</code> 和 <code>strcpy</code></li>
+<li><strong>指针必须先指向有效地址再用</strong>，否则是野指针，程序可能直接崩</li>
+<li><strong><code>&amp;</code> 是取地址，<code>*</code> 是取值</strong>，两个符号别搞反</li>
+<li><strong>函数想改外部变量，必须传地址</strong></li>
+</ol>
+<h2 id="七、小结"><a href="#七、小结" class="headerlink" title="七、小结"></a>七、小结</h2><p>今天最核心的一句话：<strong>指针就是地址，<code>&amp;</code> 拿地址，<code>*</code> 用地址。</strong></p>
+<ul>
+<li>字符串 &#x3D; 字符数组 + <code>\0</code> 结尾，配套 <code>string.h</code> 里的函数</li>
+<li>指针存地址，让函数能修改外部变量</li>
+<li>理解了指针，就理解了 <code>scanf</code> 为什么要加 <code>&amp;</code></li>
+</ul>
+<p>指针这块今天只是入门，真正熟练得靠后面写代码慢慢磨。</p>
+<h2 id="八、明天计划"><a href="#八、明天计划" class="headerlink" title="八、明天计划"></a>八、明天计划</h2><ul>
+<li><input disabled="" type="checkbox"> 学结构体，把不同类型的数据打包成一个整体</li>
+<li><input disabled="" type="checkbox"> 学文件读写，让程序能把数据存下来</li>
+<li><input disabled="" type="checkbox"> 用结构体 + 数组做一个「学生成绩管理」小项目</li>
+</ul>
+<p>第三天有点烧脑，但「指针 &#x3D; 地址」这个直觉一旦建立，后面会顺很多 💪</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/" class="category-chain-item">编程入门</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C%E8%AF%AD%E8%A8%80/" class="print-no-link">#C语言</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>C 语言学习笔记 · 第三天</div>
+      <div>https://wg7p5hfn5g-gif.github.io/2026/11/07/c-language-day3/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>wg7p5hfn5g-gif</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年11月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/11/06/c-language-day2/" title="C 语言学习笔记 · 第二天">
+                        <span class="hidden-mobile">C 语言学习笔记 · 第二天</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
