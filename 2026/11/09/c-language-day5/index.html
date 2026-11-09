@@ -1,0 +1,950 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="wg7p5hfn5g-gif">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="C 语言学习笔记 · 第五天今天的内容按第四天定的计划走：动态内存（malloc &#x2F; free）、把成绩管理升级成菜单版、再补一个冒泡排序。写之前先回头复习一下第一天的东西，因为今天要用到它们。 一、先复习第一天第一天学了五件事，现在天天都在用：    第一天的内容 现在还在用吗    main 是程序入口，printf 输出、\n 换行 每篇代码都在用   变量必须先声明类型（int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C 语言学习笔记 · 第五天">
+<meta property="og:url" content="https://wg7p5hfn5g-gif.github.io/2026/11/09/c-language-day5/index.html">
+<meta property="og:site_name" content="My Blog">
+<meta property="og:description" content="C 语言学习笔记 · 第五天今天的内容按第四天定的计划走：动态内存（malloc &#x2F; free）、把成绩管理升级成菜单版、再补一个冒泡排序。写之前先回头复习一下第一天的东西，因为今天要用到它们。 一、先复习第一天第一天学了五件事，现在天天都在用：    第一天的内容 现在还在用吗    main 是程序入口，printf 输出、\n 换行 每篇代码都在用   变量必须先声明类型（int">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-11-09T08:40:00.000Z">
+<meta property="article:modified_time" content="2026-11-09T08:39:52.161Z">
+<meta property="article:author" content="wg7p5hfn5g-gif">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>C 语言学习笔记 · 第五天 - My Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"wg7p5hfn5g-gif.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="C 语言学习笔记 · 第五天"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-11-09 16:40" pubdate>
+          2026年11月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          44 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">C 语言学习笔记 · 第五天</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="C-语言学习笔记-·-第五天"><a href="#C-语言学习笔记-·-第五天" class="headerlink" title="C 语言学习笔记 · 第五天"></a>C 语言学习笔记 · 第五天</h1><p>今天的内容按第四天定的计划走：<strong>动态内存</strong>（<code>malloc</code> &#x2F; <code>free</code>）、把成绩管理升级成<strong>菜单版</strong>、再补一个<strong>冒泡排序</strong>。写之前先回头复习一下第一天的东西，因为今天要用到它们。</p>
+<h2 id="一、先复习第一天"><a href="#一、先复习第一天" class="headerlink" title="一、先复习第一天"></a>一、先复习第一天</h2><p>第一天学了五件事，现在天天都在用：</p>
+<table>
+<thead>
+<tr>
+<th>第一天的内容</th>
+<th>现在还在用吗</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>main</code> 是程序入口，<code>printf</code> 输出、<code>\n</code> 换行</td>
+<td>每篇代码都在用</td>
+</tr>
+<tr>
+<td>变量必须先声明类型（<code>int</code> &#x2F; <code>float</code> &#x2F; <code>double</code> &#x2F; <code>char</code>）</td>
+<td>今天的结构体也是从这来的</td>
+</tr>
+<tr>
+<td><code>scanf</code> 的变量要加 <code>&amp;</code></td>
+<td>今天读菜单选项、读成绩都要加</td>
+</tr>
+<tr>
+<td>整数除法会丢小数（<code>10/3 = 3</code>）</td>
+<td>今天算平均分就踩这个坑</td>
+</tr>
+<tr>
+<td>判断相等是 <code>==</code> 不是 <code>=</code></td>
+<td>写 <code>while(choice = 0)</code> 就死循环</td>
+</tr>
+</tbody></table>
+<p>另外补一条这两天才明白的规则：<strong>在 VS2010 里编译 <code>.c</code> 文件用的是 C89 标准，所有变量声明必须放在代码块最前面</strong>，不能写在 <code>printf</code> 之后再声明——我上周就因为 <code>int c = a+b;</code> 写在 <code>printf</code> 后面，报了一堆「缺少 <code>;</code>」的错。</p>
+<h2 id="二、为什么需要动态内存"><a href="#二、为什么需要动态内存" class="headerlink" title="二、为什么需要动态内存"></a>二、为什么需要动态内存</h2><p>之前定义数组，长度必须写死：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> scores[<span class="hljs-number">50</span>];        <span class="hljs-comment">// 最多 50 个，写多了浪费，写少了不够</span><br></code></pre></td></tr></table></figure>
+
+<p>问题很明显：<strong>到底存几个学生，程序写的时候就定了，可用户是运行时才知道的</strong>。</p>
+<p><code>malloc</code> 就是解决这个的：<strong>在程序运行的时候，临时向系统要一块内存</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> n = <span class="hljs-number">3</span>;                                  <span class="hljs-comment">// 用户说存 3 个</span><br><span class="hljs-type">int</span> *scores = (<span class="hljs-type">int</span> *)<span class="hljs-built_in">malloc</span>(n * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));   <span class="hljs-comment">// 现在才分配</span><br></code></pre></td></tr></table></figure>
+
+<p>如果用户说要 100 个，那就 <code>malloc(100 * sizeof(int))</code> —— 长度成了变量，这就是「动态」。</p>
+<blockquote>
+<p>内存大致分两块：<strong>栈</strong>放普通局部变量，编译时就定好大小；<strong>堆</strong>是 <code>malloc</code> 要来的地方，随时可以申请和归还。<code>free</code> 就是把借来的还回去。</p>
+</blockquote>
+<h2 id="三、malloc-的四个固定动作"><a href="#三、malloc-的四个固定动作" class="headerlink" title="三、malloc 的四个固定动作"></a>三、malloc 的四个固定动作</h2><p><code>malloc</code> 的使用套路永远长这样，背下来就行：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span>     <span class="hljs-comment">// malloc 和 free 住在这里</span></span><br><br><span class="hljs-type">int</span> *p = (<span class="hljs-type">int</span> *)<span class="hljs-built_in">malloc</span>(n * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">int</span>));   <span class="hljs-comment">// 1. 申请：n 个元素的空间</span><br><br><span class="hljs-keyword">if</span> (p == <span class="hljs-literal">NULL</span>) &#123;                            <span class="hljs-comment">// 2. 判空：内存可能不够</span><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;内存分配失败\n&quot;</span>);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-comment">/* 3. 用：p[0] = 10; 可以像数组一样用 */</span><br><br><span class="hljs-built_in">free</span>(p);                                    <span class="hljs-comment">// 4. 归还</span><br>p = <span class="hljs-literal">NULL</span>;                                   <span class="hljs-comment">//    顺手置空，防野指针</span><br></code></pre></td></tr></table></figure>
+
+<p>四个要点：</p>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sizeof(int)</code></td>
+<td>一个 int 占几个字节，别手写 4，让编译器算</td>
+</tr>
+<tr>
+<td><code>(int *)</code></td>
+<td>把 <code>void *</code> 转成 int 指针，C 里可省，写上更清楚</td>
+</tr>
+<tr>
+<td><code>NULL</code> 判断</td>
+<td>内存不够时返回 <code>NULL</code>，不判就直接崩</td>
+</tr>
+<tr>
+<td><code>free</code> + 置 <code>NULL</code></td>
+<td>借了必须还；还完再置空，否则指针悬着很危险</td>
+</tr>
+</tbody></table>
+<p>⚠️ <strong>三个不能做的事</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-built_in">free</span>(p); <span class="hljs-built_in">free</span>(p);            <span class="hljs-comment">// ❌ 重复释放，程序直接崩</span><br><span class="hljs-type">int</span> a; <span class="hljs-built_in">free</span>(&amp;a);             <span class="hljs-comment">// ❌ 栈上的变量不能 free</span><br><span class="hljs-built_in">free</span>(p); <span class="hljs-comment">/* 之后还接着用 p */</span> <span class="hljs-comment">// ❌ 用已释放的内存，结果是随机的</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="四、实战：菜单版学生成绩管理"><a href="#四、实战：菜单版学生成绩管理" class="headerlink" title="四、实战：菜单版学生成绩管理"></a>四、实战：菜单版学生成绩管理</h2><p>第四天那个项目是「一条直线跑到底」，今天改成<strong>能反复选择功能</strong>的菜单版，数据用 <code>malloc</code> 按人数分配。</p>
+<p>结构体沿用它（回顾第四天）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> MAX_NAME 20</span><br><br><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> &#123;</span><br>    <span class="hljs-type">char</span> name[MAX_NAME];<br>    <span class="hljs-type">int</span> score;<br>&#125; Student;<br></code></pre></td></tr></table></figure>
+
+<p>四个功能函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* 录入 n 个学生 */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">inputStudents</span><span class="hljs-params">(Student *arr, <span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;第 %d 个学生的姓名和成绩：&quot;</span>, i + <span class="hljs-number">1</span>);<br>        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%19s %d&quot;</span>, arr[i].name, &amp;arr[i].score);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/* 显示全部 */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">showStudents</span><span class="hljs-params">(<span class="hljs-type">const</span> Student *arr, <span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n%-10s %6s\n&quot;</span>, <span class="hljs-string">&quot;姓名&quot;</span>, <span class="hljs-string">&quot;成绩&quot;</span>);<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%-10s %6d\n&quot;</span>, arr[i].name, arr[i].score);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/* 平均分 —— 注意要转成 double */</span><br><span class="hljs-type">double</span> <span class="hljs-title function_">average</span><span class="hljs-params">(<span class="hljs-type">const</span> Student *arr, <span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> i;<br>    <span class="hljs-type">int</span> sum = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (n &lt;= <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0.0</span>;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        sum += arr[i].score;<br>    &#125;<br>    <span class="hljs-keyword">return</span> (<span class="hljs-type">double</span>)sum / n;      <span class="hljs-comment">/* 不加强制转换，小数部分就丢了 */</span><br>&#125;<br><br><span class="hljs-comment">/* 保存到文件 */</span><br><span class="hljs-type">int</span> <span class="hljs-title function_">saveToFile</span><span class="hljs-params">(<span class="hljs-type">const</span> Student *arr, <span class="hljs-type">int</span> n, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *path)</span><br>&#123;<br>    <span class="hljs-type">int</span> i;<br>    FILE *fp = fopen(path, <span class="hljs-string">&quot;w&quot;</span>);<br>    <span class="hljs-keyword">if</span> (fp == <span class="hljs-literal">NULL</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>        <span class="hljs-built_in">fprintf</span>(fp, <span class="hljs-string">&quot;%s %d\n&quot;</span>, arr[i].name, arr[i].score);<br>    &#125;<br>    fclose(fp);<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>主函数：<strong>菜单就是一个「循环 + switch」</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>    <span class="hljs-type">int</span> n, choice;<br>    Student *<span class="hljs-built_in">list</span> = <span class="hljs-literal">NULL</span>;<br><br>    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;要录入几个学生？&quot;</span>);<br>    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>, &amp;n);<br>    <span class="hljs-keyword">if</span> (n &lt;= <span class="hljs-number">0</span>) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;人数必须大于 0\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-built_in">list</span> = (Student *)<span class="hljs-built_in">malloc</span>(n * <span class="hljs-keyword">sizeof</span>(Student));<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">list</span> == <span class="hljs-literal">NULL</span>) &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;内存分配失败\n&quot;</span>);<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">do</span> &#123;<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n===== 学生成绩管理 =====\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;1. 录入成绩\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;2. 显示全部\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;3. 计算平均分\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;4. 按成绩排序\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;5. 保存到文件\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;0. 退出\n&quot;</span>);<br>        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;请选择：&quot;</span>);<br>        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>, &amp;choice);<br><br>        <span class="hljs-keyword">switch</span> (choice) &#123;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:<br>            inputStudents(<span class="hljs-built_in">list</span>, n);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:<br>            showStudents(<span class="hljs-built_in">list</span>, n);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;平均分：%.2f\n&quot;</span>, average(<span class="hljs-built_in">list</span>, n));<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>:<br>            sortByScore(<span class="hljs-built_in">list</span>, n);<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;已按成绩从高到低排序\n&quot;</span>);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">5</span>:<br>            <span class="hljs-keyword">if</span> (saveToFile(<span class="hljs-built_in">list</span>, n, <span class="hljs-string">&quot;students.txt&quot;</span>)) &#123;<br>                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;已保存到 students.txt\n&quot;</span>);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;保存失败\n&quot;</span>);<br>            &#125;<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span>:<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;再见\n&quot;</span>);<br>            <span class="hljs-keyword">break</span>;<br>        <span class="hljs-keyword">default</span>:<br>            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;没有这个选项，请重新输入\n&quot;</span>);<br>        &#125;<br>    &#125; <span class="hljs-keyword">while</span> (choice != <span class="hljs-number">0</span>);<br><br>    <span class="hljs-built_in">free</span>(<span class="hljs-built_in">list</span>);<br>    <span class="hljs-built_in">list</span> = <span class="hljs-literal">NULL</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>菜单的精髓就三行：<code>do &#123; ... &#125; while (choice != 0)</code> 让程序一直转，<code>switch</code> 分发功能，<code>case 0</code> 才是出口。</p>
+<blockquote>
+<p>💡 注意：<code>case 4</code> 调的 <code>sortByScore</code> 在下一节才定义，记得把它写在 <code>main</code> 前面，或者在 <code>main</code> 上面补一行声明：<code>void sortByScore(Student *arr, int n);</code></p>
+</blockquote>
+<h2 id="五、冒泡排序"><a href="#五、冒泡排序" class="headerlink" title="五、冒泡排序"></a>五、冒泡排序</h2><p>给 <code>case 4</code> 补上排序函数。思路是<strong>相邻两个比较，不符合顺序就交换</strong>，每一轮能把当前最大的「冒」到最后。</p>
+<p>以 5 个成绩降序为例：</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs tap">初始： <span class="hljs-number"> 72 </span><span class="hljs-number"> 85 </span><span class="hljs-number"> 90 </span><span class="hljs-number"> 63 </span> 88<br><br>第<span class="hljs-number"> 1 </span>轮（比<span class="hljs-number"> 4 </span>次）：<br>  72&lt;85 换 →<span class="hljs-number"> 85 </span><span class="hljs-number"> 72 </span><span class="hljs-number"> 90 </span><span class="hljs-number"> 63 </span> 88<br>  72&lt;90 换 →<span class="hljs-number"> 85 </span><span class="hljs-number"> 90 </span><span class="hljs-number"> 72 </span><span class="hljs-number"> 63 </span> 88<br>  72&gt;63 不换<br>  63&lt;88 换 →<span class="hljs-number"> 85 </span><span class="hljs-number"> 90 </span><span class="hljs-number"> 72 </span><span class="hljs-number"> 88 </span><span class="hljs-number"> 63 </span>    ←<span class="hljs-number"> 63 </span>沉底<br><br>第<span class="hljs-number"> 2 </span>轮（比<span class="hljs-number"> 3 </span>次）：<br>  85&lt;90 换 →<span class="hljs-number"> 90 </span><span class="hljs-number"> 85 </span><span class="hljs-number"> 72 </span><span class="hljs-number"> 88 </span> 63<br>  85&gt;72 不换<br>  72&lt;88 换 →<span class="hljs-number"> 90 </span><span class="hljs-number"> 85 </span><span class="hljs-number"> 88 </span><span class="hljs-number"> 72 </span><span class="hljs-number"> 63 </span>    ←<span class="hljs-number"> 72 </span>就位<br><br>第<span class="hljs-number"> 3 </span>轮（比<span class="hljs-number"> 2 </span>次）：<br>  90&gt;85 不换<br>  85&lt;88 换 →<span class="hljs-number"> 90 </span><span class="hljs-number"> 88 </span><span class="hljs-number"> 85 </span><span class="hljs-number"> 72 </span> 63<br><br>第<span class="hljs-number"> 4 </span>轮（比<span class="hljs-number"> 1 </span>次）：没有交换 → 直接结束<br></code></pre></td></tr></table></figure>
+
+<p>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">/* 按成绩从高到低排序 */</span><br><span class="hljs-type">void</span> <span class="hljs-title function_">sortByScore</span><span class="hljs-params">(Student *arr, <span class="hljs-type">int</span> n)</span><br>&#123;<br>    <span class="hljs-type">int</span> i, j, swapped;<br>    Student tmp;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n - <span class="hljs-number">1</span>; i++) &#123;<br>        swapped = <span class="hljs-number">0</span>;                          <span class="hljs-comment">/* 本轮有没有换过 */</span><br>        <span class="hljs-keyword">for</span> (j = <span class="hljs-number">0</span>; j &lt; n - <span class="hljs-number">1</span> - i; j++) &#123;     <span class="hljs-comment">/* 后面 i 个已经排好，不用比 */</span><br>            <span class="hljs-keyword">if</span> (arr[j].score &lt; arr[j + <span class="hljs-number">1</span>].score) &#123;<br>                tmp = arr[j];                 <span class="hljs-comment">/* 结构体整体交换 */</span><br>                arr[j] = arr[j + <span class="hljs-number">1</span>];<br>                arr[j + <span class="hljs-number">1</span>] = tmp;<br>                swapped = <span class="hljs-number">1</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (!swapped) <span class="hljs-keyword">break</span>;                  <span class="hljs-comment">/* 一轮没动 = 已经有序，提前收工 */</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>三个容易搞错的地方：</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>为什么这么写</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>j &lt; n - 1 - i</code></td>
+<td>每轮末尾会多出一个已排好的，不用再比</td>
+</tr>
+<tr>
+<td><code>tmp</code> 是 <code>Student</code> 类型</td>
+<td>交换的是整个结构体，姓名和成绩要一起走</td>
+</tr>
+<tr>
+<td><code>swapped</code> 标记</td>
+<td>优化：已经有序就不再做无用的比较</td>
+</tr>
+</tbody></table>
+<p>复杂度：最多比 <code>n(n-1)/2</code> 次，5 个人 10 次，100 个人 4950 次——<strong>数据一多就慢</strong>，所以实际项目里用的是快排，但冒泡最适合理解「排序」这件事。</p>
+<h2 id="六、今天的坑"><a href="#六、今天的坑" class="headerlink" title="六、今天的坑"></a>六、今天的坑</h2><ol>
+<li><strong><code>malloc</code> 的乘积别写错</strong>：是 <code>n * sizeof(Student)</code>，不是 <code>n</code>，也不是 <code>sizeof(n)</code></li>
+<li><strong><code>free</code> 只还一次</strong>：重复 free 会崩，free 完把指针置 <code>NULL</code> 最安全</li>
+<li>**平均分要转 <code>double</code>**：<code>sum / n</code> 两个都是 int，小数直接丢（第一天就学过）</li>
+<li><strong><code>scanf(&quot;%19s&quot;, name)</code> 限制长度</strong>：不限制的话输入超长就把内存冲坏了</li>
+<li>**菜单用 <code>do...while</code>**：用 <code>while</code> 得先给 <code>choice</code> 一个初值，容易漏</li>
+<li><strong>VS2010 的 C89 限制</strong>：循环变量、临时变量都要在函数开头声明好</li>
+</ol>
+<h2 id="七、小结"><a href="#七、小结" class="headerlink" title="七、小结"></a>七、小结</h2><p>今天三件事，其实是层层递进的：</p>
+<ul>
+<li><strong><code>malloc</code> &#x2F; <code>free</code></strong> 解决了「数组长度必须写死」的限制，让程序能按运行时的情况申请内存</li>
+<li><strong>菜单版</strong>把一堆功能串成一个能反复使用的工具，<code>do...while</code> + <code>switch</code> 是标准骨架</li>
+<li><strong>冒泡排序</strong>第一次让数据「自己动起来」，也是理解排序算法的起点</li>
+</ul>
+<p>回头看这五天：第一天只会打印一行字，今天已经能写一个带菜单、能排序、能存盘的管理程序了。<strong>代码从 8 行长到 130 行，但用到的还是那几个零件</strong>——变量、循环、判断、数组、函数、结构体，再加今天的指针和堆内存。</p>
+<h2 id="八、明天计划"><a href="#八、明天计划" class="headerlink" title="八、明天计划"></a>八、明天计划</h2><ul>
+<li><input disabled="" type="checkbox"> 把成绩管理改成「不预设人数」，边录入边 <code>realloc</code> 扩容</li>
+<li><input disabled="" type="checkbox"> 学指针数组和二级指针，搞清楚 <code>char *argv[]</code></li>
+<li><input disabled="" type="checkbox"> 试试用「选择排序」对比冒泡，感受算法差异</li>
+</ul>
+<p>第五天结束，终于写出了有「交互感」的程序 🎮</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8/" class="category-chain-item">编程入门</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C%E8%AF%AD%E8%A8%80/" class="print-no-link">#C语言</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="print-no-link">#学习笔记</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>C 语言学习笔记 · 第五天</div>
+      <div>https://wg7p5hfn5g-gif.github.io/2026/11/09/c-language-day5/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>wg7p5hfn5g-gif</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年11月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/11/08/c-language-day4/" title="C 语言学习笔记 · 第四天">
+                        <span class="hidden-mobile">C 语言学习笔记 · 第四天</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
