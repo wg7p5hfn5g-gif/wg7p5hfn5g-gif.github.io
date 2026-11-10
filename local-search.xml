@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>学习笔记 · 第六天：渗透测试入门</title>
+    <link href="/2026/11/10/day6-pentest-start/"/>
+    <url>/2026/11/10/day6-pentest-start/</url>
+    
+    <content type="html"><![CDATA[<h1 id="学习笔记-·-第六天：渗透测试入门"><a href="#学习笔记-·-第六天：渗透测试入门" class="headerlink" title="学习笔记 · 第六天：渗透测试入门"></a>学习笔记 · 第六天：渗透测试入门</h1><p>学了五天 C 语言，今天正式换赛道：开始学<strong>渗透测试</strong>。C 语言先不丢——以后分析漏洞、看懂 PoC、理解内存问题，全靠这五天的底子。这篇是渗透方向的第 0 课，把概念、工具、法律边界和练手环境一次理清。</p><h2 id="〇、先把最重要的话放最前面"><a href="#〇、先把最重要的话放最前面" class="headerlink" title="〇、先把最重要的话放最前面"></a>〇、先把最重要的话放最前面</h2><blockquote><p>⚠️ <strong>渗透测试 &#x3D; 拿着授权去攻击。没有授权，就是违法。</strong></p></blockquote><p>《网络安全法》《刑法》第 285&#x2F;286 条写得明明白白：未经授权入侵计算机系统、获取数据，属于犯罪行为。哪怕「只是测试一下」「没有搞破坏」，也一样。</p><p>所以从第一天起就建立这个习惯：<strong>只打自己搭的靶场、只打书面授权的目标</strong>。靶场随便玩，练出真本事；真实系统没授权，一根手指头都别碰。</p><h2 id="一、渗透测试到底是什么"><a href="#一、渗透测试到底是什么" class="headerlink" title="一、渗透测试到底是什么"></a>一、渗透测试到底是什么</h2><p>一句话：<strong>站在攻击者的角度，用攻击者的手法，找出系统里的漏洞，然后告诉防守方怎么修。</strong></p><p>它和「黑客攻击」的区别只有一个——<strong>授权</strong>：</p><table><thead><tr><th></th><th>渗透测试（合法）</th><th>黑客攻击（违法）</th></tr></thead><tbody><tr><td>目标</td><td>授权范围内</td><td>想打哪打哪</td></tr><tr><td>目的</td><td>找漏洞、写报告、帮修复</td><td>窃数据、搞破坏、牟利</td></tr><tr><td>过程</td><td>记录每一步，可复现</td><td>尽量不留痕迹</td></tr><tr><td>结果</td><td>漏洞被修复</td><td>有人受损</td></tr></tbody></table><p>完整的渗透流程一般是五步（先记框架，细节以后一天天补）：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">信息收集 → 漏洞扫描 → 漏洞利用 → 权限提升 → 痕迹清理 + 报告<br></code></pre></td></tr></table></figure><h2 id="二、-HTTP-基础：渗透的第一块地基"><a href="#二、-HTTP-基础：渗透的第一块地基" class="headerlink" title="二、 HTTP 基础：渗透的第一块地基"></a>二、 HTTP 基础：渗透的第一块地基</h2><p>Web 渗透打的就是 HTTP 请求，先把请求和响应看懂：</p><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs http">GET /login.php?id=1 HTTP/1.1        ← 请求行：方法 路径 版本<br><span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>target.local                  ← 头部：主机、Cookie、User-Agent……<br><span class="hljs-attribute">Cookie</span><span class="hljs-punctuation">: </span>session=abc123<br><br>（空行）<br>（POST 才有正文）<br></code></pre></td></tr></table></figure><p>必须搞懂的概念：</p><table><thead><tr><th>概念</th><th>一句话解释</th></tr></thead><tbody><tr><td>GET &#x2F; POST</td><td>GET 参数在 URL 上，POST 参数在正文里</td></tr><tr><td>状态码</td><td>200 成功、302 跳转、403 拒绝、404 不存在、500 服务器出错</td></tr><tr><td>Cookie &#x2F; Session</td><td>服务器认「你是谁」的凭证，Session 劫持就是偷它</td></tr><tr><td>请求头</td><td><code>User-Agent</code>、<code>Referer</code>、<code>X-Forwarded-For</code> 都可能成为攻击面</td></tr></tbody></table><p>抓包工具 <strong>Burp Suite</strong> 就是把浏览器发出的请求拦下来，让你随便改完再发出去——后面所有 Web 漏洞练习都绕不开它。</p><h2 id="三、常见-Web-漏洞：先混个脸熟"><a href="#三、常见-Web-漏洞：先混个脸熟" class="headerlink" title="三、常见 Web 漏洞：先混个脸熟"></a>三、常见 Web 漏洞：先混个脸熟</h2><p>OWASP Top 10 是行业公认的漏洞排行，入门阶段记住这几个名字和一句话原理：</p><table><thead><tr><th>漏洞</th><th>一句话原理</th><th>后果</th></tr></thead><tbody><tr><td>SQL 注入</td><td>用户输入被拼进了 SQL 语句</td><td>拖库、绕过登录</td></tr><tr><td>XSS</td><td>恶意脚本被当成页面内容执行</td><td>偷 Cookie、挂马</td></tr><tr><td>文件上传</td><td>传了个 Webshell 上去</td><td>直接拿下服务器</td></tr><tr><td>命令注入</td><td>用户输入被拼进了系统命令</td><td>执行任意命令</td></tr><tr><td>弱口令</td><td>密码是 <code>admin/admin</code></td><td>等于没锁门</td></tr><tr><td>越权访问</td><td>改个 ID 就能看别人的数据</td><td>数据泄露</td></tr></tbody></table><p>上周纳新考核里的 SQL 注入就属于第一种——<code>&#39; or 1=1 -- </code> 能绕过登录，本质是<strong>输入被当成了代码</strong>。记住这句话：<strong>一切漏洞的根源，都是「数据被当成了代码执行」。</strong> 以后看到任何漏洞，先问一句：哪里把用户输入当代码了？</p><h2 id="四、搭自己的练手靶场"><a href="#四、搭自己的练手靶场" class="headerlink" title="四、搭自己的练手靶场"></a>四、搭自己的练手靶场</h2><p>不搭靶场就练手，迟早出事。入门推荐 <strong>DVWA</strong>（Damn Vulnerable Web Application，故意做成满身漏洞的教学网站）：</p><p>最省事的方案（Windows + phpStudy）：</p><ol><li>装 phpStudy（小皮面板），一键起 Apache + MySQL</li><li>官网下载 DVWA，解压到网站根目录</li><li>浏览器访问 <code>http://127.0.0.1/dvwa</code>，按提示初始化数据库</li><li>默认账号 <code>admin / password</code>，登录后把 <strong>DVWA Security</strong> 调成 <code>Low</code> 开始玩</li></ol><p>⚠️ 只玩 <code>127.0.0.1</code> 本地靶场。想练更多场景，还有 SQLi-labs（专练 SQL 注入）、Upload-labs（专练文件上传）、Pikachu，全是本地靶场。</p><blockquote><p>💡 以后要装 Kali Linux 的话，它自带几乎全部渗透工具，用虚拟机（VMware &#x2F; VirtualBox）装一个，也是只用来打本地靶场。</p></blockquote><h2 id="五、入门工具箱"><a href="#五、入门工具箱" class="headerlink" title="五、入门工具箱"></a>五、入门工具箱</h2><table><thead><tr><th>工具</th><th>干什么</th><th>什么时候学</th></tr></thead><tbody><tr><td>Burp Suite</td><td>抓包、改请求、暴力破解</td><td>第一周</td></tr><tr><td>Nmap</td><td>扫描目标开放了哪些端口</td><td>第二周</td></tr><tr><td>sqlmap</td><td>自动化 SQL 注入</td><td>学完注入原理后</td></tr><tr><td>Chrome F12</td><td>看请求、改前端代码</td><td>今天就可以</td></tr><tr><td>dirsearch &#x2F; 御剑</td><td>扫目录，找后台地址</td><td>学信息收集时</td></tr></tbody></table><p>顺序建议：<strong>先原理后工具</strong>。比如 SQL 注入，先用 DVWA 的 Low 难度手动注入搞懂原理，再上 sqlmap——反过来就成了只会点按钮的「脚本小子」。</p><h2 id="六、学习路线（给自己定的）"><a href="#六、学习路线（给自己定的）" class="headerlink" title="六、学习路线（给自己定的）"></a>六、学习路线（给自己定的）</h2><ul><li><input disabled="" type="checkbox"> 第 1 周：HTTP 协议 + DVWA 靶场搭建 + Burp Suite 抓包</li><li><input disabled="" type="checkbox"> 第 2~3 周：SQL 注入原理（union 注入、报错注入、盲注）</li><li><input disabled="" type="checkbox"> 第 4 周：XSS 三种类型 + Cookie 窃取原理（靶场内）</li><li><input disabled="" type="checkbox"> 第 5 周：文件上传漏洞 + 一句话木马原理（靶场内）</li><li><input disabled="" type="checkbox"> 之后：Linux 基础 → 内网与提权概念 → CTF 练习题</li></ul><p>C 语言这边也别停：指针和内存是以后理解缓冲区溢出、逆向分析的门票，每天保持写一点。</p><h2 id="七、今天的坑（其实是红线）"><a href="#七、今天的坑（其实是红线）" class="headerlink" title="七、今天的坑（其实是红线）"></a>七、今天的坑（其实是红线）</h2><ol><li><strong>没授权就是违法</strong>，哪怕是朋友的网站、公司的系统，白纸黑字授权前不碰</li><li><strong>不在公网练习</strong>，所有练习只在本地靶场（127.0.0.1 &#x2F; 虚拟机内网）</li><li><strong>学会的漏洞不外传细节</strong>，写博客只写原理和防御，不写成攻击教程</li><li><strong>工具不是重点</strong>，先把「输入为什么变成了代码」想明白</li><li><strong>别信「只是测试」</strong>，渗透圈的信任是靠授权文件和职业操守建立的</li></ol><h2 id="八、小结与明天计划"><a href="#八、小结与明天计划" class="headerlink" title="八、小结与明天计划"></a>八、小结与明天计划</h2><p>今天做的事：建立了渗透的正确姿势（授权优先）、认识了 HTTP 和常见漏洞、搭好了 DVWA、定好了路线。</p><ul><li><input disabled="" type="checkbox"> 明天：DVWA SQL 注入 Low 难度，手动注入走通「绕过登录 → union 查库 → 拖表」全流程</li><li><input disabled="" type="checkbox"> 复盘：把每一步的 payload 和返回结果记录下来，形成自己的注入笔记</li><li><input disabled="" type="checkbox"> 同时：C 语言继续推进 <code>realloc</code> 和链表</li></ul><p>第六天，从「写程序的人」开始往「找漏洞的人」转变了 🔒</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>网络安全</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C语言</tag>
+      
+      <tag>学习笔记</tag>
+      
+      <tag>渗透测试</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>C 语言学习笔记 · 第五天</title>
     <link href="/2026/11/09/c-language-day5/"/>
     <url>/2026/11/09/c-language-day5/</url>
