@@ -1,0 +1,945 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="wg7p5hfn5g-gif">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 JavaScript。红线不变：一切操作只在 127.0.0.1 本地 DVWA 靶场进行。  一、XSS 是什么网站把用户输入的内容原样输出到 HTML 页面里时，你提交一段 JavaScript 代码，它就会在其他访问者的浏览器里执行。 对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）">
+<meta property="og:url" content="https://wg7p5hfn5g-gif.github.io/2026/11/12/day8-xss-dvwa/index.html">
+<meta property="og:site_name" content="My Blog">
+<meta property="og:description" content="昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 JavaScript。红线不变：一切操作只在 127.0.0.1 本地 DVWA 靶场进行。  一、XSS 是什么网站把用户输入的内容原样输出到 HTML 页面里时，你提交一段 JavaScript 代码，它就会在其他访问者的浏览器里执行。 对">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-11-12T01:00:00.000Z">
+<meta property="article:modified_time" content="2026-11-12T00:37:26.140Z">
+<meta property="article:author" content="wg7p5hfn5g-gif">
+<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="XSS">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA） - My Blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"wg7p5hfn5g-gif.github.io","root":"/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-11-12 09:00" pubdate>
+          2026年11月12日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 <strong>JavaScript</strong>。<br><strong>红线不变：一切操作只在 <code>127.0.0.1</code> 本地 DVWA 靶场进行。</strong></p>
+</blockquote>
+<h2 id="一、XSS-是什么"><a href="#一、XSS-是什么" class="headerlink" title="一、XSS 是什么"></a>一、XSS 是什么</h2><p>网站把用户输入的内容<strong>原样输出到 HTML 页面</strong>里时，你提交一段 JavaScript 代码，它就会在<strong>其他访问者的浏览器</strong>里执行。</p>
+<p>对比一下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>SQL 注入</th>
+<th>XSS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户输入被当成</td>
+<td>SQL 语句</td>
+<td>JS 代码</td>
+</tr>
+<tr>
+<td>受害者</td>
+<td>数据库</td>
+<td>浏览器里的用户</td>
+</tr>
+<tr>
+<td>能偷什么</td>
+<td>库表数据</td>
+<td>Cookie、页面内容、按键</td>
+</tr>
+</tbody></table>
+<h2 id="二、三种类型"><a href="#二、三种类型" class="headerlink" title="二、三种类型"></a>二、三种类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>代码存在哪</th>
+<th>触发方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>反射型</strong></td>
+<td>只在本次请求里</td>
+<td>骗人点带恶意参数的链接，点一次中一次</td>
+</tr>
+<tr>
+<td><strong>存储型</strong></td>
+<td>存进了数据库（如留言板）</td>
+<td>每个打开页面的人都会中，危害最大</td>
+</tr>
+<tr>
+<td><strong>DOM 型</strong></td>
+<td>纯前端 JS 处理 URL 参数</td>
+<td>不经过服务器，抓包看不到</td>
+</tr>
+</tbody></table>
+<h2 id="三、反射型：DVWA-XSS-Reflected-Low"><a href="#三、反射型：DVWA-XSS-Reflected-Low" class="headerlink" title="三、反射型：DVWA XSS (Reflected) Low"></a>三、反射型：DVWA XSS (Reflected) Low</h2><p>进入 <strong>XSS (Reflected)</strong> 页面，输入框输入：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>弹窗出现——你的代码已经在浏览器里跑起来了。原理看一眼 Low 等级源码就懂：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>] . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;   <span class="hljs-comment">// 输入原样拼进 HTML</span><br></code></pre></td></tr></table></figure>
+
+<p>弹窗只是「我能执行代码」的证明，真正有价值的是看看当前页面能摸到什么：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-property">cookie</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>把 <code>PHPSESSID</code> 弹出来看看——这就是 <strong>Cookie 窃取</strong>的雏形：真实攻击里是把这个值发送到攻击者的服务器，拿着别人的 Session ID 就能直接以对方身份登录（这就是后面学 Burp 时「会话劫持」的基础）。</p>
+<h2 id="四、存储型：DVWA-XSS-Stored-Low"><a href="#四、存储型：DVWA-XSS-Stored-Low" class="headerlink" title="四、存储型：DVWA XSS (Stored) Low"></a>四、存储型：DVWA XSS (Stored) Low</h2><p>进入 **XSS (Stored)**（留言板），在 Message 里提交：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>刷新页面——<strong>又弹了</strong>。因为这段代码被存进了数据库，每个打开留言板的人都会执行。这就是存储型比反射型危险的原因：反射型要骗人点链接，存储型是「守株待兔」。</p>
+<p>体验一下危害边界：再用它弹一次 <code>document.cookie</code>，你会发现<strong>别人的浏览器里也能读到他们自己的 Cookie</strong>。</p>
+<h2 id="五、DOM-型（认识一下）"><a href="#五、DOM-型（认识一下）" class="headerlink" title="五、DOM 型（认识一下）"></a>五、DOM 型（认识一下）</h2><p>DVWA 里的 DOM 型藏在 URL 的 <code>#</code> 后面的参数里，特征是：</p>
+<ul>
+<li>请求里看不到恶意代码（<code>#</code> 后的内容不发给服务器）</li>
+<li>页面自己的 JS 把这段内容写进了 HTML</li>
+</ul>
+<p>抓包工具抓不到它，只能靠审计前端代码。今天先记住概念，面试常考三种的区别。</p>
+<h2 id="六、防御视角：为什么会中招"><a href="#六、防御视角：为什么会中招" class="headerlink" title="六、防御视角：为什么会中招"></a>六、防御视角：为什么会中招</h2><p>还是看 Low 源码：输入<strong>原样输出</strong>。正确做法是<strong>输出编码（转义）</strong>：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-comment">// 安全写法：特殊字符全部转义</span><br><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-title function_ invoke__">htmlspecialchars</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>], ENT_QUOTES, <span class="hljs-string">&#x27;UTF-8&#x27;</span>) . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p><code>&lt;</code> 变成 <code>&amp;lt;</code>、<code>&gt;</code> 变成 <code>&amp;gt;</code>，浏览器就只当它是文字，不再是标签。配合的纵深防御：</p>
+<table>
+<thead>
+<tr>
+<th>措施</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>htmlspecialchars</code> 输出转义</td>
+<td>最核心，HTML 上下文够用</td>
+</tr>
+<tr>
+<td>HttpOnly Cookie</td>
+<td>JS 读不到 Cookie，偷了 Session 也用不了</td>
+</tr>
+<tr>
+<td>CSP（内容安全策略）</td>
+<td>响应头限制谁有权执行脚本</td>
+</tr>
+<tr>
+<td>前端框架自动转义</td>
+<td>Vue&#x2F;React 默认帮你转义，别用 <code>v-html</code>&#x2F;<code>dangerouslySetInnerHTML</code> 接用户输入</td>
+</tr>
+</tbody></table>
+<h2 id="七、今天的坑"><a href="#七、今天的坑" class="headerlink" title="七、今天的坑"></a>七、今天的坑</h2><table>
+<thead>
+<tr>
+<th>坑</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>绕不过 Medium 等级</td>
+<td>不是你错了，<code>&lt;script&gt;</code> 被过滤了，学过滤器绕过是后面的课，今天只打 Low</td>
+</tr>
+<tr>
+<td>存储型弹窗关不完</td>
+<td>留言板存了 alert 之后每次刷新都弹，去 MySQL 里删 guestbook 记录或重置数据库</td>
+</tr>
+<tr>
+<td>只会 alert 不会延伸</td>
+<td>alert 只是验证，多试 <code>document.cookie</code>、<code>document.location</code> 感受「能拿到什么」</td>
+</tr>
+<tr>
+<td>分不清三种类型</td>
+<td>记口诀：反射型找链接、存储型找数据库、DOM 型找前端 JS</td>
+</tr>
+<tr>
+<td>对真实网站测试</td>
+<td>违法，同昨天，只有 127.0.0.1</td>
+</tr>
+</tbody></table>
+<h2 id="八、小结与明天计划"><a href="#八、小结与明天计划" class="headerlink" title="八、小结与明天计划"></a>八、小结与明天计划</h2><p>今天收获：<strong>XSS 三种类型 + 反射&#x2F;存储 Low 打通 + Cookie 窃取原理 + 输出编码防御</strong>。和昨天的 SQL 注入连起来看，你已经见过「注入家族」的两个头号成员了，防御思路也是同一个哲学：<strong>永远不让用户输入越过「数据」和「代码」的边界</strong>。</p>
+<p><strong>明天计划</strong>：文件上传漏洞——DVWA File Upload Low，讲清「一句话木马」是什么、中国菜刀&#x2F;蚁剑怎么连（原理层面），以及为什么上传目录不能给执行权限。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" class="print-no-link">#渗透测试</a>
+      
+        <a href="/tags/XSS/" class="print-no-link">#XSS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）</div>
+      <div>https://wg7p5hfn5g-gif.github.io/2026/11/12/day8-xss-dvwa/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>wg7p5hfn5g-gif</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年11月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/11/11/day7-sqli-dvwa/" title="渗透学习笔记 · 第七天：SQL 注入实战（DVWA）">
+                        <span class="hidden-mobile">渗透学习笔记 · 第七天：SQL 注入实战（DVWA）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
