@@ -19,15 +19,15 @@
   <meta name="author" content="wg7p5hfn5g-gif">
   <meta name="keywords" content="">
   
-    <meta name="description" content="昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 JavaScript。红线不变：一切操作只在 127.0.0.1 本地 DVWA 靶场进行。  一、XSS 是什么网站把用户输入的内容原样输出到 HTML 页面里时，你提交一段 JavaScript 代码，它就会在其他访问者的浏览器里执行。 对">
+    <meta name="description" content="渗透学习第三天，今天轮到 XSS。记录人：我自己。老规矩：所有操作只在本地 DVWA（127.0.0.1）里做，线上的东西一个字节都不碰。  一、一开始我有点懵：这不就是 SQL 注入换个马甲？昨天我刚把 SQL 注入四步法打穿，今天学 XSS 的本质和它是一个祖宗——「数据被当成了代码」。我一开始没转过弯：昨天输入被当成了 SQL，今天被当成了什么？ 答案是 JavaScript。自己画了个对">
 <meta property="og:type" content="article">
-<meta property="og:title" content="渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）">
+<meta property="og:title" content="渗透学习笔记 · 第八天：我终于搞懂了 XSS">
 <meta property="og:url" content="https://wg7p5hfn5g-gif.github.io/2026/11/12/day8-xss-dvwa/index.html">
 <meta property="og:site_name" content="My Blog">
-<meta property="og:description" content="昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 JavaScript。红线不变：一切操作只在 127.0.0.1 本地 DVWA 靶场进行。  一、XSS 是什么网站把用户输入的内容原样输出到 HTML 页面里时，你提交一段 JavaScript 代码，它就会在其他访问者的浏览器里执行。 对">
+<meta property="og:description" content="渗透学习第三天，今天轮到 XSS。记录人：我自己。老规矩：所有操作只在本地 DVWA（127.0.0.1）里做，线上的东西一个字节都不碰。  一、一开始我有点懵：这不就是 SQL 注入换个马甲？昨天我刚把 SQL 注入四步法打穿，今天学 XSS 的本质和它是一个祖宗——「数据被当成了代码」。我一开始没转过弯：昨天输入被当成了 SQL，今天被当成了什么？ 答案是 JavaScript。自己画了个对">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-11-12T01:00:00.000Z">
-<meta property="article:modified_time" content="2026-11-12T00:37:26.140Z">
+<meta property="article:modified_time" content="2026-11-13T08:58:43.674Z">
 <meta property="article:author" content="wg7p5hfn5g-gif">
 <meta property="article:tag" content="渗透测试">
 <meta property="article:tag" content="XSS">
@@ -35,7 +35,7 @@
   
   
   
-  <title>渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA） - My Blog</title>
+  <title>渗透学习笔记 · 第八天：我终于搞懂了 XSS - My Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -304,7 +304,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）"></span>
+            <span id="subtitle" data-typed-text="渗透学习笔记 · 第八天：我终于搞懂了 XSS"></span>
           
         </div>
 
@@ -327,7 +327,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          2.2k 字
         
       </span>
     
@@ -338,7 +338,7 @@
         
         
         
-          17 分钟
+          19 分钟
         
       </span>
     
@@ -377,16 +377,16 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）</h1>
+            <h1 id="seo-header">渗透学习笔记 · 第八天：我终于搞懂了 XSS</h1>
             
             
               <div class="markdown-body">
                 
                 <blockquote>
-<p>昨天把 SQL 注入打穿了，今天学 XSS——它和 SQL 注入是同一个祖宗：「数据被当成了代码」，只不过昨天被当成代码的是 SQL，今天被当成代码的是 <strong>JavaScript</strong>。<br><strong>红线不变：一切操作只在 <code>127.0.0.1</code> 本地 DVWA 靶场进行。</strong></p>
+<p>渗透学习第三天，今天轮到 XSS。记录人：我自己。<br>老规矩：所有操作只在本地 DVWA（127.0.0.1）里做，线上的东西一个字节都不碰。</p>
 </blockquote>
-<h2 id="一、XSS-是什么"><a href="#一、XSS-是什么" class="headerlink" title="一、XSS 是什么"></a>一、XSS 是什么</h2><p>网站把用户输入的内容<strong>原样输出到 HTML 页面</strong>里时，你提交一段 JavaScript 代码，它就会在<strong>其他访问者的浏览器</strong>里执行。</p>
-<p>对比一下：</p>
+<h2 id="一、一开始我有点懵：这不就是-SQL-注入换个马甲？"><a href="#一、一开始我有点懵：这不就是-SQL-注入换个马甲？" class="headerlink" title="一、一开始我有点懵：这不就是 SQL 注入换个马甲？"></a>一、一开始我有点懵：这不就是 SQL 注入换个马甲？</h2><p>昨天我刚把 SQL 注入四步法打穿，今天学 XSS 的本质和它是一个祖宗——「<strong>数据被当成了代码</strong>」。我一开始没转过弯：昨天输入被当成了 SQL，今天被当成了什么？</p>
+<p>答案是 <strong>JavaScript</strong>。自己画了个对比表才真懂：</p>
 <table>
 <thead>
 <tr>
@@ -396,70 +396,77 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>用户输入被当成</td>
+<td>我的输入被当成</td>
 <td>SQL 语句</td>
 <td>JS 代码</td>
 </tr>
 <tr>
-<td>受害者</td>
+<td>谁遭殃</td>
 <td>数据库</td>
-<td>浏览器里的用户</td>
+<td>打开网页的其他人</td>
 </tr>
 <tr>
 <td>能偷什么</td>
 <td>库表数据</td>
-<td>Cookie、页面内容、按键</td>
+<td>Cookie、页面内容</td>
 </tr>
 </tbody></table>
-<h2 id="二、三种类型"><a href="#二、三种类型" class="headerlink" title="二、三种类型"></a>二、三种类型</h2><table>
+<p><strong>最大的区别是受害者</strong>：SQL 注入是我自己打服务器，XSS 是坑「之后打开这个页面的人」——所以我不是在攻击服务器，是在构造一个陷阱。这个视角一换，后面的东西就全通了。</p>
+<h2 id="二、反射型：我第一次让页面执行我的代码"><a href="#二、反射型：我第一次让页面执行我的代码" class="headerlink" title="二、反射型：我第一次让页面执行我的代码"></a>二、反射型：我第一次让页面执行我的代码</h2><p>DVWA 的 XSS (Reflected) Low 页面，输入框里我敲了：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>弹窗弹出来的那一刻挺爽的——我看了一眼 Low 等级源码，就一行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>] . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;   <span class="hljs-comment">// 我输的东西被原样拼进了 HTML</span><br></code></pre></td></tr></table></figure>
+
+<p><code>&lt;script&gt;</code> 标签没有被任何处理，直接变成了页面的一部分。这和我昨天看 SQL 拼接源码的感觉一模一样：<strong>服务器太信任我的输入了</strong>。</p>
+<p>alert 只是证明「我能跑代码」，真正让我后背发凉的是下一句：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-property">cookie</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>我的 PHPSESSID 被弹出来了。也就是说，真实攻击里只要把这段代码改成「发到攻击者的服务器」，别人打开页面的瞬间，他的登录凭证就是我的了。<strong>原来所谓盗号，门槛比我想的低得多。</strong> 这也是为什么后面学 Burp 的时候要重点研究会话劫持。</p>
+<h2 id="三、存储型：这个是真的危险"><a href="#三、存储型：这个是真的危险" class="headerlink" title="三、存储型：这个是真的危险"></a>三、存储型：这个是真的危险</h2><p>反射型还得骗人点链接，我觉得不够狠。然后我试了存储型（留言板）：</p>
+<p>在 Message 里提交 <code>&lt;script&gt;alert(1)&lt;/script&gt;</code>，然后刷新页面——<strong>又弹了</strong>。</p>
+<p>我愣了两秒才反应过来：这段代码被我存进数据库了。<strong>不是「我中招」，是每一个打开留言板的人都会中招</strong>，包括管理员。反射型是钓鱼，存储型是守株待兔，而且兔子自己会来。</p>
+<p>顺便踩了个小坑：我多存了几个 alert 之后，页面每次刷新都疯狂弹窗，关都关不完。最后是进 MySQL 把 guestbook 表的记录删了才安静下来（或者直接用 DVWA 的重置数据库按钮，更省事）。</p>
+<h2 id="四、DOM-型：今天只记住了概念"><a href="#四、DOM-型：今天只记住了概念" class="headerlink" title="四、DOM 型：今天只记住了概念"></a>四、DOM 型：今天只记住了概念</h2><p>第三种 XSS 的恶意代码藏在 URL 的 <code>#</code> 后面——<strong>这部分根本不会发给服务器</strong>，所以抓包工具（Burp）看不到，只能靠读前端 JS。</p>
+<p>我现在的记法是三句话：</p>
+<ul>
+<li><strong>反射型</strong>：找链接</li>
+<li><strong>存储型</strong>：找数据库</li>
+<li><strong>DOM 型</strong>：找前端代码</li>
+</ul>
+<p>面试据说爱考这个区别，先背下来，等以后学前端审计再深入。</p>
+<h2 id="五、我自己的坑清单（今天真的全踩了一遍）"><a href="#五、我自己的坑清单（今天真的全踩了一遍）" class="headerlink" title="五、我自己的坑清单（今天真的全踩了一遍）"></a>五、我自己的坑清单（今天真的全踩了一遍）</h2><table>
 <thead>
 <tr>
-<th>类型</th>
-<th>代码存在哪</th>
-<th>触发方式</th>
+<th>坑</th>
+<th>我的经历</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>反射型</strong></td>
-<td>只在本次请求里</td>
-<td>骗人点带恶意参数的链接，点一次中一次</td>
+<td>Medium 等级打不动</td>
+<td>我顺手试了 Medium，<code>&lt;script&gt;</code> 直接被吞了，还以为自己写错了。后来明白那是过滤器在起作用，绕过是后面的课，今天先只打 Low</td>
 </tr>
 <tr>
-<td><strong>存储型</strong></td>
-<td>存进了数据库（如留言板）</td>
-<td>每个打开页面的人都会中，危害最大</td>
+<td>存储型弹窗关不完</td>
+<td>见第三节，删数据库记录才解决</td>
 </tr>
 <tr>
-<td><strong>DOM 型</strong></td>
-<td>纯前端 JS 处理 URL 参数</td>
-<td>不经过服务器，抓包看不到</td>
+<td>只会 alert</td>
+<td>alert 只是敲门砖，要多试 <code>document.cookie</code>、<code>document.location</code> 才知道「到底能拿到什么」</td>
+</tr>
+<tr>
+<td>中文输入法老毛病</td>
+<td>又来了！和写 C 代码那次一样，引号打成了中文的，页面怎么都不弹。<strong>写 payload 必须全程英文输入法</strong>，这个坑我算是记死了</td>
+</tr>
+<tr>
+<td>手痒想碰线上</td>
+<td>心里痒过一下，但想到《刑法》285 条和自己昨天写的红线清单，忍住了。靶场只有 127.0.0.1</td>
 </tr>
 </tbody></table>
-<h2 id="三、反射型：DVWA-XSS-Reflected-Low"><a href="#三、反射型：DVWA-XSS-Reflected-Low" class="headerlink" title="三、反射型：DVWA XSS (Reflected) Low"></a>三、反射型：DVWA XSS (Reflected) Low</h2><p>进入 <strong>XSS (Reflected)</strong> 页面，输入框输入：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<h2 id="六、防御：看完漏洞源码，防御代码反而最好懂"><a href="#六、防御：看完漏洞源码，防御代码反而最好懂" class="headerlink" title="六、防御：看完漏洞源码，防御代码反而最好懂"></a>六、防御：看完漏洞源码，防御代码反而最好懂</h2><p>Low 的源码就是「原样输出」，所以修复也直白：<strong>输出的时候转义</strong>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-title function_ invoke__">htmlspecialchars</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>], ENT_QUOTES, <span class="hljs-string">&#x27;UTF-8&#x27;</span>) . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;<br></code></pre></td></tr></table></figure>
 
-<p>弹窗出现——你的代码已经在浏览器里跑起来了。原理看一眼 Low 等级源码就懂：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>] . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;   <span class="hljs-comment">// 输入原样拼进 HTML</span><br></code></pre></td></tr></table></figure>
-
-<p>弹窗只是「我能执行代码」的证明，真正有价值的是看看当前页面能摸到什么：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-variable language_">document</span>.<span class="hljs-property">cookie</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
-
-<p>把 <code>PHPSESSID</code> 弹出来看看——这就是 <strong>Cookie 窃取</strong>的雏形：真实攻击里是把这个值发送到攻击者的服务器，拿着别人的 Session ID 就能直接以对方身份登录（这就是后面学 Burp 时「会话劫持」的基础）。</p>
-<h2 id="四、存储型：DVWA-XSS-Stored-Low"><a href="#四、存储型：DVWA-XSS-Stored-Low" class="headerlink" title="四、存储型：DVWA XSS (Stored) Low"></a>四、存储型：DVWA XSS (Stored) Low</h2><p>进入 **XSS (Stored)**（留言板），在 Message 里提交：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript"><span class="hljs-title function_">alert</span>(<span class="hljs-number">1</span>)</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
-
-<p>刷新页面——<strong>又弹了</strong>。因为这段代码被存进了数据库，每个打开留言板的人都会执行。这就是存储型比反射型危险的原因：反射型要骗人点链接，存储型是「守株待兔」。</p>
-<p>体验一下危害边界：再用它弹一次 <code>document.cookie</code>，你会发现<strong>别人的浏览器里也能读到他们自己的 Cookie</strong>。</p>
-<h2 id="五、DOM-型（认识一下）"><a href="#五、DOM-型（认识一下）" class="headerlink" title="五、DOM 型（认识一下）"></a>五、DOM 型（认识一下）</h2><p>DVWA 里的 DOM 型藏在 URL 的 <code>#</code> 后面的参数里，特征是：</p>
-<ul>
-<li>请求里看不到恶意代码（<code>#</code> 后的内容不发给服务器）</li>
-<li>页面自己的 JS 把这段内容写进了 HTML</li>
-</ul>
-<p>抓包工具抓不到它，只能靠审计前端代码。今天先记住概念，面试常考三种的区别。</p>
-<h2 id="六、防御视角：为什么会中招"><a href="#六、防御视角：为什么会中招" class="headerlink" title="六、防御视角：为什么会中招"></a>六、防御视角：为什么会中招</h2><p>还是看 Low 源码：输入<strong>原样输出</strong>。正确做法是<strong>输出编码（转义）</strong>：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-comment">// 安全写法：特殊字符全部转义</span><br><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;pre&gt;Hello &quot;</span> . <span class="hljs-title function_ invoke__">htmlspecialchars</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;name&#x27;</span>], ENT_QUOTES, <span class="hljs-string">&#x27;UTF-8&#x27;</span>) . <span class="hljs-string">&quot;&lt;/pre&gt;&quot;</span>;<br></code></pre></td></tr></table></figure>
-
-<p><code>&lt;</code> 变成 <code>&amp;lt;</code>、<code>&gt;</code> 变成 <code>&amp;gt;</code>，浏览器就只当它是文字，不再是标签。配合的纵深防御：</p>
+<p><code>&lt;</code> 变 <code>&amp;lt;</code>、<code>&gt;</code> 变 <code>&amp;gt;</code>，浏览器拿到后只当是文字，标签就失效了。我把纵深防御整理成四条，贴在了自己的笔记本上：</p>
 <table>
 <thead>
 <tr>
@@ -469,51 +476,27 @@
 </thead>
 <tbody><tr>
 <td><code>htmlspecialchars</code> 输出转义</td>
-<td>最核心，HTML 上下文够用</td>
+<td>最核心的一招</td>
 </tr>
 <tr>
 <td>HttpOnly Cookie</td>
-<td>JS 读不到 Cookie，偷了 Session 也用不了</td>
+<td>JS 读不到 Cookie，就算有 XSS 也偷不走登录态</td>
 </tr>
 <tr>
-<td>CSP（内容安全策略）</td>
-<td>响应头限制谁有权执行脚本</td>
+<td>CSP 响应头</td>
+<td>限制谁能执行脚本</td>
 </tr>
 <tr>
 <td>前端框架自动转义</td>
-<td>Vue&#x2F;React 默认帮你转义，别用 <code>v-html</code>&#x2F;<code>dangerouslySetInnerHTML</code> 接用户输入</td>
+<td>Vue&#x2F;React 默认转义，千万别用 <code>v-html</code> &#x2F; <code>dangerouslySetInnerHTML</code> 接用户输入</td>
 </tr>
 </tbody></table>
-<h2 id="七、今天的坑"><a href="#七、今天的坑" class="headerlink" title="七、今天的坑"></a>七、今天的坑</h2><table>
-<thead>
-<tr>
-<th>坑</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>绕不过 Medium 等级</td>
-<td>不是你错了，<code>&lt;script&gt;</code> 被过滤了，学过滤器绕过是后面的课，今天只打 Low</td>
-</tr>
-<tr>
-<td>存储型弹窗关不完</td>
-<td>留言板存了 alert 之后每次刷新都弹，去 MySQL 里删 guestbook 记录或重置数据库</td>
-</tr>
-<tr>
-<td>只会 alert 不会延伸</td>
-<td>alert 只是验证，多试 <code>document.cookie</code>、<code>document.location</code> 感受「能拿到什么」</td>
-</tr>
-<tr>
-<td>分不清三种类型</td>
-<td>记口诀：反射型找链接、存储型找数据库、DOM 型找前端 JS</td>
-</tr>
-<tr>
-<td>对真实网站测试</td>
-<td>违法，同昨天，只有 127.0.0.1</td>
-</tr>
-</tbody></table>
-<h2 id="八、小结与明天计划"><a href="#八、小结与明天计划" class="headerlink" title="八、小结与明天计划"></a>八、小结与明天计划</h2><p>今天收获：<strong>XSS 三种类型 + 反射&#x2F;存储 Low 打通 + Cookie 窃取原理 + 输出编码防御</strong>。和昨天的 SQL 注入连起来看，你已经见过「注入家族」的两个头号成员了，防御思路也是同一个哲学：<strong>永远不让用户输入越过「数据」和「代码」的边界</strong>。</p>
-<p><strong>明天计划</strong>：文件上传漏洞——DVWA File Upload Low，讲清「一句话木马」是什么、中国菜刀&#x2F;蚁剑怎么连（原理层面），以及为什么上传目录不能给执行权限。</p>
+<h2 id="七、今天的总结和明天的计划"><a href="#七、今天的总结和明天的计划" class="headerlink" title="七、今天的总结和明天的计划"></a>七、今天的总结和明天的计划</h2><p>把这两天的知识串起来，我发现「注入家族」其实是同一个哲学：</p>
+<blockquote>
+<p><strong>永远不让用户输入越过「数据」和「代码」的边界。</strong><br>昨天：拼接 SQL 时越界 → SQL 注入 → 修复靠参数化查询<br>今天：拼接 HTML 时越界 → XSS → 修复靠输出转义</p>
+</blockquote>
+<p>按这个思路，明天要学的<strong>文件上传漏洞</strong>应该也是家族成员——我猜是「我的文件被当成了可执行代码」？带着这个猜想去打 DVWA File Upload Low，明天验证猜得对不对。</p>
+<p>明天计划：文件上传漏洞 + 「一句话木马」到底是什么 + 为什么上传目录不能给执行权限。</p>
 
                 
               </div>
@@ -561,7 +544,7 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>渗透学习笔记 · 第八天：XSS 跨站脚本（DVWA）</div>
+      <div>渗透学习笔记 · 第八天：我终于搞懂了 XSS</div>
       <div>https://wg7p5hfn5g-gif.github.io/2026/11/12/day8-xss-dvwa/</div>
     </div>
     <div class="license-meta">
