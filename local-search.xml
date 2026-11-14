@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>渗透学习笔记 · 第九天：文件上传，我昨天的猜想对了一半</title>
+    <link href="/2026/11/14/day9-file-upload/"/>
+    <url>/2026/11/14/day9-file-upload/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>渗透学习第四天。昨天结尾我猜「文件上传也是注入家族成员，是『我的文件被当成了可执行代码』」——今天验证，结果对了一半。<br>老规矩：全部操作在本地 DVWA（127.0.0.1）完成，线上一个字节都不碰。</p></blockquote><h2 id="一、先说说-DVWA-的-File-Upload-Low"><a href="#一、先说说-DVWA-的-File-Upload-Low" class="headerlink" title="一、先说说 DVWA 的 File Upload Low"></a>一、先说说 DVWA 的 File Upload Low</h2><p>页面很朴素：一个上传按钮，加一行提示「上传你的头像」。我随手传了个 png，它回了一段路径：</p><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">..<span class="hljs-regexp">/../</span>hackable<span class="hljs-regexp">/uploads/</span>xxx.png<br>Suceessfully uploaded!<br></code></pre></td></tr></table></figure><p>看见那个路径我就明白了——<strong>文件被存进了网站目录，而且我能知道它存在哪、叫什么名字</strong>。这就是所有文件上传漏洞的起点：网站让我把文件放进了它能执行的地方。</p><h2 id="二、猜想的验证：对了一半"><a href="#二、猜想的验证：对了一半" class="headerlink" title="二、猜想的验证：对了一半"></a>二、猜想的验证：对了一半</h2><p>我昨天猜的是「我的文件被当成了可执行代码」，验证后要修正成更准确的说法：</p><blockquote><p><strong>文件上传漏洞的本质不是「注入」，而是「我把一个可执行文件放进了网站目录，然后请求它，它就被执行了」。</strong></p></blockquote><p>区别在哪？SQL 注入和 XSS 是「数据越界变成代码」，而文件上传是「<strong>我直接交了一个代码文件，服务器还替我保管、还能替我运行</strong>」。所以它其实更像「<strong>我给服务器塞了一个后门，还能自己按门铃</strong>」。</p><p>那么「家族」的说法对不对？——算远亲。共同点还是那一条：<strong>信任边界没守住</strong>。</p><h2 id="三、实操：上传一个-PHP-文件"><a href="#三、实操：上传一个-PHP-文件" class="headerlink" title="三、实操：上传一个 PHP 文件"></a>三、实操：上传一个 PHP 文件</h2><p>Low 等级什么检查都没有。我建了一个 <code>test.php</code>：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;hello from my file&quot;</span>; <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>上传 → 访问 <code>http://127.0.0.1/DVWA/hackable/uploads/test.php</code> → 页面打印出 <code>hello from my file</code>。</p><p><strong>我的 PHP 代码在服务器上跑起来了。</strong> 这一步的意义比看起来大：这意味着服务器愿意执行我提供的任何代码。</p><h2 id="四、「一句话木马」到底是什么"><a href="#四、「一句话木马」到底是什么" class="headerlink" title="四、「一句话木马」到底是什么"></a>四、「一句话木马」到底是什么</h2><p>网上到处是这四个字，我觉得被神化了。它的原理其实简单到无聊：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> @<span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>拆开看：</p><ul><li><code>$_POST[&#39;cmd&#39;]</code> —— 服务器接收我从表单发来的一段字符串</li><li><code>eval()</code> —— 把这段字符串<strong>当成 PHP 代码执行</strong></li><li><code>@</code> —— 抑制报错，免得暴露信息</li></ul><p>就这三样。我传上去这个文件之后，以后只要往它 POST 一句 <code>system(&#39;whoami&#39;)</code>，服务器就会执行 <code>whoami</code> 并把结果返回来。</p><p><strong>所以「一句话木马」不是病毒，是一个「远程代码执行入口」</strong>。中国菜刀、蚁剑这类工具做的事也很朴素：把「发请求 → 拿回显」包装成图形界面，让我像操作本地文件夹一样操作服务器。</p><p>（这些东西我只在自己电脑的靶场里理解原理，不会传任何真实服务器。这不是技巧问题，是底线问题。）</p><h2 id="五、Low-之外的等级：过滤器长什么样"><a href="#五、Low-之外的等级：过滤器长什么样" class="headerlink" title="五、Low 之外的等级：过滤器长什么样"></a>五、Low 之外的等级：过滤器长什么样</h2><p>我顺手试了 Medium，传 <code>.php</code> 被拒了，提示只允许 jpg&#x2F;png。看了源码，判断方式是这样的：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span> ((<span class="hljs-variable">$uploaded_type</span> == <span class="hljs-string">&quot;image/jpeg&quot;</span> || <span class="hljs-variable">$uploaded_type</span> == <span class="hljs-string">&quot;image/png&quot;</span>) &amp;&amp; (<span class="hljs-variable">$uploaded_size</span> &lt; <span class="hljs-number">100000</span>))<br></code></pre></td></tr></table></figure><p>它信的是请求里的 <code>Content-Type</code>——而这个是<strong>浏览器发的、抓包能随便改的</strong>。所以这类检查本质上是「问坏人你是不是坏人」。</p><p>真正靠得住的做法，是不信任何前端信息，只在服务端做白名单：</p><table><thead><tr><th>防御措施</th><th>为什么有效</th></tr></thead><tbody><tr><td><strong>后缀白名单</strong>（只允许 jpg&#x2F;png&#x2F;zip 等明确列表）</td><td>黑名单永远漏（php3&#x2F;phtml&#x2F;大小写&#x2F;双后缀）</td></tr><tr><td><strong>服务端重命名</strong>（随机文件名 + 保留原后缀）</td><td>让我猜不到路径，也就访问不到</td></tr><tr><td><strong>上传目录禁止脚本执行</strong></td><td>最关键的兜底：文件传进来也跑不起来</td></tr><tr><td><strong>文件存到 Web 目录之外</strong></td><td>根本访问不到，只能由程序读出来再输出</td></tr><tr><td><strong>校验真实文件头（magic number）</strong></td><td>图片就是图片，改后缀没用</td></tr></tbody></table><p>我觉得最值得记住的是<strong>第三条</strong>：哪怕前两条都被绕过，只要上传目录禁了 PHP 解析，我这个 shell 就是一块废铁。这是「纵深防御」的典型例子——不是靠一招制胜，而是让攻击者要连续突破好几层。</p><h2 id="六、今天我踩的坑"><a href="#六、今天我踩的坑" class="headerlink" title="六、今天我踩的坑"></a>六、今天我踩的坑</h2><table><thead><tr><th>坑</th><th>我的经历</th></tr></thead><tbody><tr><td>传上去访问 404</td><td>路径写错了，DVWA 的上传目录是 <code>hackable/uploads/</code>，要按返回的完整路径访问</td></tr><tr><td>php 文件里混了中文引号</td><td>又是这个老毛病！<code>echo</code> 后面的引号打成中文的，页面空白什么都不输出。我现在养成习惯了：<strong>写代码前先确认输入法是英文</strong></td></tr><tr><td>以为一句话木马很复杂</td><td>真看到就 5 个字符的 <code>eval</code>，失望了两秒，但也踏实了——原理越简单越难防</td></tr><tr><td>想去找现成的「工具」</td><td>差点去搜菜刀下载，后来想明白：<strong>工具会过期，原理不会</strong>。靶场里手写 POST 请求比装个工具学到的多</td></tr><tr><td>手痒想传线上</td><td>同前几天，忍住。上传到别人服务器 &#x3D; 未授权访问 + 可能构成破坏计算机信息系统罪</td></tr></tbody></table><h2 id="七、这四天的串连"><a href="#七、这四天的串连" class="headerlink" title="七、这四天的串连"></a>七、这四天的串连</h2><p>我给自己画了条线，发现四天的东西能连成一个整体：</p><table><thead><tr><th>天数</th><th>漏洞</th><th>我做的事</th><th>一句话本质</th></tr></thead><tbody><tr><td>第六天</td><td>概念</td><td>学 HTTP、搭靶场</td><td>一切从「请求」开始</td></tr><tr><td>第七天</td><td>SQL 注入</td><td>手工四步法掏库</td><td>数据被当成 SQL 执行</td></tr><tr><td>第八天</td><td>XSS</td><td>弹 Cookie</td><td>数据被当成 JS 执行</td></tr><tr><td>第九天</td><td>文件上传</td><td>传 PHP 后门</td><td><strong>文件被当成代码执行</strong></td></tr></tbody></table><p>四天下来，我脑子里只剩一句总结：<strong>所有漏洞都在同一个地方出事——服务器分不清「我给的到底是数据还是代码」。</strong></p><h2 id="八、明天的计划"><a href="#八、明天的计划" class="headerlink" title="八、明天的计划"></a>八、明天的计划</h2><p>我想换个角度：这几天一直在打 DVWA，但真实的渗透测试不是「打开页面找输入框」。明天想学 <strong>信息收集</strong>——Nmap 扫端口、看目录结构、指纹识别，这是真实渗透的第一步，也是我目前最空白的一块。</p><p>如果 DVWA 还有没打完的（CSRF、命令注入、暴力破解），也可以先补完再走。明天看状态决定。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>学习笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>文件上传</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>渗透学习笔记 · 第八天：我终于搞懂了 XSS</title>
     <link href="/2026/11/12/day8-xss-dvwa/"/>
     <url>/2026/11/12/day8-xss-dvwa/</url>
